@@ -11,7 +11,8 @@ fn main() {
   let cli = Cli::parse();
 
   match cli.command {
-    Some(Command::Up { service, .. }) => runner::create_and_run_containers(service),
+    // TODO: Add error handling + exit code
+    Some(Command::Up { service, .. }) => runner::run_services(service),
     None => Cli::command().print_help().unwrap(),
   }
 }
