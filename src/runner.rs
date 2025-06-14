@@ -2,9 +2,9 @@ use std::{collections::HashMap, fs, path::Path, process::Command};
 
 use crate::{container, deserializer};
 
-pub fn run_services(path: Vec<String>) {
+pub fn run_services(path: Option<String>) {
   let compose_file = Path::new(".").join("docker-compose.yaml");
-  let Ok(yaml) = fs::read_to_string(path.first().unwrap_or(&compose_file.to_str().unwrap().to_string())) else {
+  let Ok(yaml) = fs::read_to_string(path.unwrap_or(compose_file.to_str().unwrap().to_string())) else {
     panic!("No docker-compose.yaml file found");
   };
 
@@ -18,10 +18,11 @@ pub fn run_services(path: Vec<String>) {
 }
 
 struct ServiceContainer {
-  pub name: String,
-  pub ports: Vec<String>,
-  pub environment: HashMap<String, String>,
-  pub image: String,
+  name: String,
+  ports: Vec<String>,
+  environment: HashMap<String, String>,
+  image: String,
+  volumes: HashMap<String, String>,
 }
 
 impl ServiceContainer {
@@ -31,6 +32,7 @@ impl ServiceContainer {
       ports: service.ports.clone(),
       environment: service.environment.clone(),
       image: service.image.clone(),
+      volumes: service.volumes.clone(),
     }
   }
 
@@ -46,19 +48,36 @@ impl ServiceContainer {
       output.arg("-e");
       output.arg(env_var);
     }
+
+    for (key, value) in self.volumes.iter() {
+      output.arg("--mount");
+
+      if !Path::new(key).exists() {
+        std::fs::create_dir_all(key).unwrap();
+      }
+
+      let abs_source = std::fs::canonicalize(key).expect("failed to canonicalize mount source path");
+      let abs_source_str = abs_source.to_str().expect("non-UTF8 path");
+
+      output.arg(format!("type=bind,source={},target={}", abs_source_str, value));
+    }
   
     let output = output
       .arg("-d")
       .arg(self.image.clone());
-  
-    match output.output() {
-      Ok(output) => {
-        println!("{}", String::from_utf8(output.stdout).unwrap());
-        println!("{}", String::from_utf8(output.stderr).unwrap());
-      }
-      Err(e) => {
-        eprintln!("Failed to run container: {}", e);
-      }
+
+    let output = dbg!(output);
+    let Ok(output) = output.output() else {
+      eprintln!("Failed to run container");
+      return Err(());
+    };
+
+    println!("output: {}", String::from_utf8(output.stdout).unwrap());
+    println!("error: {}", String::from_utf8(output.stderr).unwrap());
+
+    if !output.status.success() {
+      eprintln!("Failed to run container: {}", output.status);
+      return Err(());
     }
 
     self.expose_service_ports();
@@ -101,5 +120,4 @@ impl ServiceContainer {
       }
     }
   }
-  
 }

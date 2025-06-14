@@ -9,8 +9,10 @@ pub struct Service {
   pub name: Option<String>,
   pub image: String,
   pub ports: Vec<String>,
-  #[serde(deserialize_with = "deserialize_environment")]
+  #[serde(deserialize_with = "deserialize_environment_variables")]
   pub environment: HashMap<String, String>,
+  #[serde(deserialize_with = "deserialize_array_key_value")]
+  pub volumes: HashMap<String, String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -26,7 +28,7 @@ pub fn deserialize_yaml(yaml: &str) -> Result<Compose, serde_yaml::Error> {
   }
 }
 
-fn deserialize_environment<'a, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
+fn deserialize_environment_variables<'a, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
 where
     D: Deserializer<'a>,
 {
@@ -68,4 +70,37 @@ where
     }
 
     deserializer.deserialize_any(EnvVisitor)
+}
+
+fn deserialize_array_key_value<'a, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
+where
+    D: Deserializer<'a>,
+{
+    struct ArrayKeyValueVisitor;
+
+    impl<'a> Visitor<'a> for ArrayKeyValueVisitor {
+        type Value = HashMap<String, String>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a list of strings which follows this format: key:value")
+        }
+
+        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'a>,
+        {
+            let mut map = HashMap::new();
+            while let Some(entry) = seq.next_element::<String>()? {
+                let parts: Vec<&str> = entry.splitn(2, ':').collect();
+                if parts.len() == 2 {
+                    map.insert(parts[0].to_string(), parts[1].to_string());
+                } else {
+                    return Err(de::Error::custom(format!("Invalid volume: {}", entry)));
+                }
+            }
+            Ok(map)
+        }
+    }
+
+    deserializer.deserialize_seq(ArrayKeyValueVisitor)
 }
