@@ -79,7 +79,6 @@ impl ServiceContainer {
       }
     }
 
-    let output = dbg!(output);
     let Ok(output) = output.output() else {
       eprintln!("Failed to run container");
       return Err(());
