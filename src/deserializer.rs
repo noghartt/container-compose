@@ -124,7 +124,6 @@ where
         where
             E: de::Error,
         {
-            // parse a command like "echo 'Hello, World!'" into a list of strings
             let parts: Vec<&str> = v.splitn(2, ' ').collect();
             if parts.len() == 2 {
                 Ok(Some(vec![parts[0].to_string(), parts[1].to_string()]))
