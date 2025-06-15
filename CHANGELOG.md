@@ -2,11 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.0.1-alpha.2] - 2025-06-15
 
 ### 💼 Other
 
 - Add manual dispatch option
+- Add CHANGELOG.md
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix triggers
 
 ## [0.0.1-alpha.1] - 2025-06-15
 
