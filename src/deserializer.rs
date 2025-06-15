@@ -13,6 +13,8 @@ pub struct Service {
   pub environment: HashMap<String, String>,
   #[serde(deserialize_with = "deserialize_array_key_value")]
   pub volumes: HashMap<String, String>,
+  #[serde(default, deserialize_with = "deserialize_command")]
+  pub command: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -103,4 +105,45 @@ where
     }
 
     deserializer.deserialize_seq(ArrayKeyValueVisitor)
+}
+
+fn deserialize_command<'a, D>(deserializer: D) -> Result<Option<Vec<String>>, D::Error>
+where
+    D: Deserializer<'a>,
+{
+    struct CommandVisitor;
+
+    impl<'a> Visitor<'a> for CommandVisitor {
+        type Value = Option<Vec<String>>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a string or a list of strings")
+        }
+
+        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            // parse a command like "echo 'Hello, World!'" into a list of strings
+            let parts: Vec<&str> = v.splitn(2, ' ').collect();
+            if parts.len() == 2 {
+                Ok(Some(vec![parts[0].to_string(), parts[1].to_string()]))
+            } else {
+                Ok(Some(vec![v.to_string()]))
+            }
+        }
+
+        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'a>,
+        {
+            let mut vec = Vec::new();
+            while let Some(entry) = seq.next_element::<String>()? {
+                vec.push(entry);
+            }
+            Ok(Some(vec)) 
+        }
+    }
+
+    deserializer.deserialize_any(CommandVisitor)
 }

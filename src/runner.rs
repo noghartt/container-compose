@@ -23,6 +23,7 @@ struct ServiceContainer {
   environment: HashMap<String, String>,
   image: String,
   volumes: HashMap<String, String>,
+  command: Option<Vec<String>>,
 }
 
 impl ServiceContainer {
@@ -33,6 +34,7 @@ impl ServiceContainer {
       environment: service.environment.clone(),
       image: service.image.clone(),
       volumes: service.volumes.clone(),
+      command: service.command.clone(),
     }
   }
 
@@ -66,14 +68,22 @@ impl ServiceContainer {
       .arg("-d")
       .arg(self.image.clone());
 
+    if let Some(command) = &self.command {
+      println!("command: {:?}", command);
+      if command.len() == 1 && command[0].is_empty() {
+        output.arg("echo").arg("No command provided");
+      } else {
+        for arg in command {
+          output.arg(arg);
+        }
+      }
+    }
+
     let output = dbg!(output);
     let Ok(output) = output.output() else {
       eprintln!("Failed to run container");
       return Err(());
     };
-
-    println!("output: {}", String::from_utf8(output.stdout).unwrap());
-    println!("error: {}", String::from_utf8(output.stderr).unwrap());
 
     if !output.status.success() {
       eprintln!("Failed to run container: {}", output.status);

@@ -12,7 +12,7 @@ fn main() {
 
   match cli.command {
     // TODO: Add error handling + exit code
-    Some(Command::Up {  service, .. }) => runner::run_services(cli.file),
+    Some(Command::Up { .. }) => runner::run_services(cli.file),
     None => Cli::command().print_help().unwrap(),
   }
 }
