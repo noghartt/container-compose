@@ -21,5 +21,8 @@ pub enum Command {
 
     #[arg()]
     service: Vec<String>,
-  }
+  },
+
+  #[command(about = "Stop and remove containers")]
+  Down
 }

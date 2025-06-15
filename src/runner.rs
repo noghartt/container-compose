@@ -1,19 +1,51 @@
-use std::{collections::HashMap, fs, path::Path, process::Command};
+use std::{collections::HashMap, path::Path, process::Command};
 
-use crate::{container, deserializer};
+use crate::{container, deserializer, utils::deserialize_compose_file};
 
 pub fn run_services(path: Option<String>) {
-  let compose_file = Path::new(".").join("docker-compose.yaml");
-  let Ok(yaml) = fs::read_to_string(path.unwrap_or(compose_file.to_str().unwrap().to_string())) else {
-    panic!("No docker-compose.yaml file found");
-  };
-
-  let compose = deserializer::deserialize_yaml(&yaml).unwrap();
-
+  let compose = deserialize_compose_file(path).unwrap();
   for (name, service) in compose.services.iter() {
     let container_name = service.name.clone().unwrap_or(name.clone());
     let service_container = ServiceContainer::new(container_name, service);
     service_container.run().unwrap();
+  }
+}
+
+pub fn stop_and_remove_services(path: Option<String>) {
+  let containers = container::get_containers_list().unwrap();
+  let container_ids = containers
+    .iter()
+    .map(|c| c.configuration.id.clone())
+    .collect::<Vec<String>>();
+
+  container::stop_container(container_ids.clone()).unwrap();
+  container::remove_container(container_ids.clone()).unwrap();
+
+  let compose = deserialize_compose_file(path).unwrap();
+
+  let ports = 
+    compose.services
+      .iter()
+      .map(|(_, service)| service.ports.clone())
+      .flatten()
+      .collect::<Vec<String>>();
+
+  for port in ports {
+    let port = port.split(":").collect::<Vec<&str>>();
+    let host_port = port[0].parse::<u16>().unwrap();
+    let output = Command::new("lsof")
+      .arg("-ti")
+      .arg(format!(":{host_port}"))
+      .output()
+      .expect("Failed to execute process");
+
+    if output.status.success() {
+      let pid = String::from_utf8(output.stdout).unwrap();
+      Command::new("kill")
+        .arg(pid.trim())
+        .output()
+        .expect("Failed to execute process");
+    }
   }
 }
 
@@ -69,7 +101,6 @@ impl ServiceContainer {
       .arg(self.image.clone());
 
     if let Some(command) = &self.command {
-      println!("command: {:?}", command);
       if command.len() == 1 && command[0].is_empty() {
         output.arg("echo").arg("No command provided");
       } else {
