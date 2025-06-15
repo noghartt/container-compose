@@ -3,6 +3,10 @@
 A CLI to let you use the Apple [container](github.com/apple/container) like a `docker-compose`
 config file.
 
+> [!WARNING]
+> This tool is on "alpha" mode, which means that you can find a lot of bugs or missing features.
+> If you find anything, feel free to open an issue. Thank you! :)
+
 ## How to install
 
 ### Installing via Homebrew
