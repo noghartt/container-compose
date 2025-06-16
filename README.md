@@ -16,6 +16,12 @@ brew tap noghartt/container-compose https://github.com/noghartt/container-compos
 brew install noghartt/container-compose/container-compose
 ```
 
+### Installing via cargo
+
+```sh
+cargo install container-compose
+```
+
 ### Downloading binary
 
 We have made a `.tar.gz` containing the binary available on the release page. 
