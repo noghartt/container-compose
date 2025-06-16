@@ -9,6 +9,7 @@ repository = "https://github.com/noghartt/container-compose"
 readme = "README.md"
 keywords = ["devops"]
 categories = ["command-line-utilities"]
+exclude = ["scripts/*", "examples/"]
 
 [dependencies]
 clap = { version = "4.5.40", features = ["derive"] }
