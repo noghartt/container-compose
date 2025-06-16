@@ -1,6 +1,6 @@
 # container-compose
 
-A CLI to let you use the Apple [container](github.com/apple/container) like a `docker-compose`
+A CLI to let you use the Apple [container](https://github.com/apple/container) like a `docker-compose`
 config file.
 
 > [!WARNING]
