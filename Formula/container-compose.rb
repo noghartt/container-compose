@@ -9,12 +9,12 @@ class ContainerCompose < Formula
   on_macos do
     on_arm do
       url "https://github.com/noghartt/container-compose/releases/download/v#{version}/container-compose-v#{version}-aarch64-apple-darwin.tar.gz"
-      sha256 "330a99ce22ef2e6d9db8e37d4735479a4135441bb9d053cfd71de2e6cdce8d3a"
+      sha256 "b4a5a33d2399762c5d0c30ea1bbb3390e62f6cce96065ee382c9cbca93e65a0a"
     end
 
     on_intel do
       url "https://github.com/noghartt/container-compose/releases/download/v#{version}/container-compose-v#{version}-x86_64-apple-darwin.tar.gz"
-      sha256 "e861f215d0ad23819fd27e485fe2c46f02e4446d7fc3b923c5cde05e6b8649d0"
+      sha256 "03ccd4c0a18df718bab7e591017a3220dbb6aaf440cc631104c3cf9639ca1ce5"
     end
   end
 
