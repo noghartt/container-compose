@@ -2,7 +2,7 @@ class ContainerCompose < Formula
   desc "A docker-compose like tool for Apple Containers "
   homepage "https://github.com/noghartt/container-compose"
 
-  version "0.0.1-alpha.2"
+  version "0.0.1-alpha.3"
 
   depends_on "socat"
 
