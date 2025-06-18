@@ -8,10 +8,11 @@ use std::fmt;
 pub struct Service {
     pub name: Option<String>,
     pub image: String,
+    #[serde(default)]
     pub ports: Vec<String>,
-    #[serde(deserialize_with = "deserialize_environment_variables")]
+    #[serde(default, deserialize_with = "deserialize_environment_variables")]
     pub environment: HashMap<String, String>,
-    #[serde(deserialize_with = "deserialize_array_key_value")]
+    #[serde(default, deserialize_with = "deserialize_array_key_value")]
     pub volumes: HashMap<String, String>,
     #[serde(default, deserialize_with = "deserialize_command")]
     pub command: Option<Vec<String>>,
