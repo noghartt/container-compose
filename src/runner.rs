@@ -26,8 +26,7 @@ pub fn stop_and_remove_services(path: Option<String>) {
     let ports = compose
         .services
         .iter()
-        .map(|(_, service)| service.ports.clone())
-        .flatten()
+        .flat_map(|(_, service)| service.ports.clone())
         .collect::<Vec<String>>();
 
     for port in ports {

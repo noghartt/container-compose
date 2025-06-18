@@ -17,6 +17,7 @@ pub struct Service {
     pub command: Option<Vec<String>>,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize)]
 pub struct Compose {
     pub version: String,
@@ -24,10 +25,7 @@ pub struct Compose {
 }
 
 pub fn deserialize_yaml(yaml: &str) -> Result<Compose, serde_yaml::Error> {
-    match serde_yaml::from_str(yaml) {
-        Ok(compose) => Ok(compose),
-        Err(e) => Err(e),
-    }
+    serde_yaml::from_str(yaml)
 }
 
 fn deserialize_environment_variables<'a, D>(
