@@ -1,0 +1,22 @@
+name: Linters
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  cargo-fmt-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Check formatting
+        run: cargo fmt --check
+
+  cargo-clippy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Check Clippy
+        run: cargo clippy -- -W clippy::perf -W clippy::correctness -W clippy::suspicious --deny=warnings
