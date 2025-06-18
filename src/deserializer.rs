@@ -21,6 +21,7 @@ pub struct Service {
 #[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize)]
 pub struct Compose {
+    #[serde(default)]
     pub version: String,
     pub services: HashMap<String, Service>,
 }
