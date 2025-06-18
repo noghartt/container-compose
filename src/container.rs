@@ -1,14 +1,10 @@
-use std::{process::Command, collections::HashMap};
 use serde::Deserialize;
+use std::{collections::HashMap, process::Command};
 
 #[allow(dead_code, unused_variables)]
-
 pub fn get_containers_list() -> Result<Vec<Container>, ()> {
     let mut command = Command::new("container");
-    command
-        .arg("ls")
-        .arg("--format")
-        .arg("json");
+    command.arg("ls").arg("--format").arg("json");
 
     let Ok(output) = command.output() else {
         eprintln!("Failed to get containers list");
@@ -25,9 +21,8 @@ pub fn get_containers_list() -> Result<Vec<Container>, ()> {
 
 pub fn stop_container(container_ids: Vec<String>) -> Result<(), ()> {
     let mut command = Command::new("container");
-    command
-        .arg("stop");
-    
+    command.arg("stop");
+
     for id in container_ids {
         command.arg(id);
     }
@@ -42,9 +37,8 @@ pub fn stop_container(container_ids: Vec<String>) -> Result<(), ()> {
 
 pub fn remove_container(container_ids: Vec<String>) -> Result<(), ()> {
     let mut command = Command::new("container");
-    command
-        .arg("rm");
-    
+    command.arg("rm");
+
     for id in container_ids {
         command.arg(id);
     }
@@ -57,6 +51,7 @@ pub fn remove_container(container_ids: Vec<String>) -> Result<(), ()> {
     Ok(())
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Container {
     pub networks: Vec<Network>,
@@ -64,6 +59,7 @@ pub struct Container {
     pub configuration: Configuration,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Network {
     pub address: String,
@@ -72,6 +68,7 @@ pub struct Network {
     pub hostname: String,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Configuration {
     pub resources: Resources,
@@ -89,12 +86,14 @@ pub struct Configuration {
     pub dns: Dns,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Resources {
     pub cpus: u32,
     // pub memoryInBytes: u64,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct InitProcess {
     pub environment: Vec<String>,
@@ -107,17 +106,20 @@ pub struct InitProcess {
     pub rlimits: Vec<String>,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct User {
     pub id: Id,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Id {
     pub uid: u32,
     pub gid: u32,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Platform {
     pub os: String,
@@ -129,12 +131,14 @@ pub struct Mount {
     // Fill in fields as needed
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Image {
     pub reference: String,
     pub descriptor: Descriptor,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Descriptor {
     pub size: u64,
@@ -143,6 +147,7 @@ pub struct Descriptor {
     // pub media_type: String,
 }
 
+#[allow(dead_code, unused_variables)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Dns {
     pub nameservers: Vec<String>,
