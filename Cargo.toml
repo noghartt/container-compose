@@ -1,6 +1,6 @@
 [package]
 name = "container-compose"
-version = "0.0.1-alpha.2"
+version = "0.0.1-alpha.4"
 edition = "2024"
 license-file = "LICENSE"
 description = " A docker-compose like tool for Apple Containers"
