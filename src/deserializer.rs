@@ -1,36 +1,38 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize};
+use serde::Deserialize;
 use serde::de::{self, Deserializer, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 
 #[derive(Debug, Deserialize)]
 pub struct Service {
-  pub name: Option<String>,
-  pub image: String,
-  pub ports: Vec<String>,
-  #[serde(deserialize_with = "deserialize_environment_variables")]
-  pub environment: HashMap<String, String>,
-  #[serde(deserialize_with = "deserialize_array_key_value")]
-  pub volumes: HashMap<String, String>,
-  #[serde(default, deserialize_with = "deserialize_command")]
-  pub command: Option<Vec<String>>,
+    pub name: Option<String>,
+    pub image: String,
+    pub ports: Vec<String>,
+    #[serde(deserialize_with = "deserialize_environment_variables")]
+    pub environment: HashMap<String, String>,
+    #[serde(deserialize_with = "deserialize_array_key_value")]
+    pub volumes: HashMap<String, String>,
+    #[serde(default, deserialize_with = "deserialize_command")]
+    pub command: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Compose {
-  pub version: String,
-  pub services: HashMap<String, Service>,
+    pub version: String,
+    pub services: HashMap<String, Service>,
 }
 
 pub fn deserialize_yaml(yaml: &str) -> Result<Compose, serde_yaml::Error> {
-  match serde_yaml::from_str(yaml) {
-    Ok(compose) => Ok(compose),
-    Err(e) => Err(e),
-  }
+    match serde_yaml::from_str(yaml) {
+        Ok(compose) => Ok(compose),
+        Err(e) => Err(e),
+    }
 }
 
-fn deserialize_environment_variables<'a, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
+fn deserialize_environment_variables<'a, D>(
+    deserializer: D,
+) -> Result<HashMap<String, String>, D::Error>
 where
     D: Deserializer<'a>,
 {
@@ -64,7 +66,10 @@ where
                 if parts.len() == 2 {
                     map.insert(parts[0].to_string(), parts[1].to_string());
                 } else {
-                    return Err(de::Error::custom(format!("Invalid environment variable: {}", entry)));
+                    return Err(de::Error::custom(format!(
+                        "Invalid environment variable: {}",
+                        entry
+                    )));
                 }
             }
             Ok(map)
@@ -140,7 +145,7 @@ where
             while let Some(entry) = seq.next_element::<String>()? {
                 vec.push(entry);
             }
-            Ok(Some(vec)) 
+            Ok(Some(vec))
         }
     }
 

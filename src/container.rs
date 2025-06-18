@@ -1,14 +1,11 @@
-use std::{process::Command, collections::HashMap};
 use serde::Deserialize;
+use std::{collections::HashMap, process::Command};
 
 #[allow(dead_code, unused_variables)]
 
 pub fn get_containers_list() -> Result<Vec<Container>, ()> {
     let mut command = Command::new("container");
-    command
-        .arg("ls")
-        .arg("--format")
-        .arg("json");
+    command.arg("ls").arg("--format").arg("json");
 
     let Ok(output) = command.output() else {
         eprintln!("Failed to get containers list");
@@ -25,9 +22,8 @@ pub fn get_containers_list() -> Result<Vec<Container>, ()> {
 
 pub fn stop_container(container_ids: Vec<String>) -> Result<(), ()> {
     let mut command = Command::new("container");
-    command
-        .arg("stop");
-    
+    command.arg("stop");
+
     for id in container_ids {
         command.arg(id);
     }
@@ -42,9 +38,8 @@ pub fn stop_container(container_ids: Vec<String>) -> Result<(), ()> {
 
 pub fn remove_container(container_ids: Vec<String>) -> Result<(), ()> {
     let mut command = Command::new("container");
-    command
-        .arg("rm");
-    
+    command.arg("rm");
+
     for id in container_ids {
         command.arg(id);
     }
