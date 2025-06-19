@@ -5,6 +5,7 @@ services:
     image: postgres:15
     ports:
       - 5432:5432
+    command: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
     cpu_count: 1
