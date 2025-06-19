@@ -16,7 +16,7 @@ pub struct Service {
     pub volumes: HashMap<String, String>,
     #[serde(default, deserialize_with = "deserialize_command")]
     pub command: Option<Vec<String>>,
-    #[serde(default, alias = "cpu")]
+    #[serde(default)]
     pub cpu_count: Option<u32>,
     #[serde(default)]
     pub mem_limit: Option<String>,
