@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-alpha.5] - 2025-06-19
+
+### 🚀 Features
+
+- Support `cpu_count` and `mem_limit` (#20)
+
+### 🐛 Bug Fixes
+
+- Allow empty version argument (#21)
+
+### 💼 Other
+
+- *(release)* Update homebrew file to v0.0.1.alpha-4 (#17)
+- Update cargo.toml version (#18)
+
+### ⚙️ Miscellaneous Tasks
+
+- Add instructions to run locally (#19)
+
 ## [0.0.1-alpha.4] - 2025-06-18
 
 ### 🚀 Features
@@ -12,6 +31,10 @@ All notable changes to this project will be documented in this file.
 
 - *(homebrew)* Change sha256 to v0.0.1-alpha.3 (#10)
 - Allow empty ports, env vars, and volumes (#12)
+
+### 💼 Other
+
+- *(release)* Update CHANGELOG for v0.0.1-alpha.4 (#16)
 
 ## [0.0.1-alpha.3] - 2025-06-17
 
