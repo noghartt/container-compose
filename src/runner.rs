@@ -55,6 +55,8 @@ struct ServiceContainer {
     image: String,
     volumes: HashMap<String, String>,
     command: Option<Vec<String>>,
+    cpu_count: Option<u32>,
+    mem_limit: Option<String>,
 }
 
 impl ServiceContainer {
@@ -66,6 +68,8 @@ impl ServiceContainer {
             image: service.image.clone(),
             volumes: service.volumes.clone(),
             command: service.command.clone(),
+            cpu_count: service.cpu_count,
+            mem_limit: service.mem_limit.clone(),
         }
     }
 
@@ -94,6 +98,14 @@ impl ServiceContainer {
                 "type=bind,source={},target={}",
                 abs_source_str, value
             ));
+        }
+
+        // Add CPU and memory limits if specified
+        if let Some(cpu_count) = self.cpu_count {
+            output.arg("--cpus").arg(cpu_count.to_string());
+        }
+        if let Some(mem_limit) = &self.mem_limit {
+            output.arg("--memory").arg(mem_limit);
         }
 
         let output = output.arg("-d").arg(self.image.clone());
