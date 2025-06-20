@@ -7,7 +7,10 @@ pub fn run_services(path: Option<String>) {
     for (name, service) in compose.services.iter() {
         let container_name = service.name.clone().unwrap_or(name.clone());
         let service_container = ServiceContainer::new(container_name, service);
-        service_container.run().unwrap();
+        match service_container.run() {
+          Ok(_) => println!("{}", name),
+          Err(e) => println!("Error while running {}: {:?}", name, e),
+        };
     }
 }
 
@@ -73,7 +76,7 @@ impl ServiceContainer {
         }
     }
 
-    pub fn run(&self) -> Result<(), ()> {
+    pub fn run(&self) -> Result<(), String> {
         let mut output = Command::new("container");
         output.arg("run").arg("--name").arg(self.name.clone());
 
@@ -120,14 +123,15 @@ impl ServiceContainer {
             }
         }
 
-        let Ok(output) = output.output() else {
-            eprintln!("Failed to run container");
-            return Err(());
-        };
-
-        if !output.status.success() {
-            eprintln!("Failed to run container: {}", output.status);
-            return Err(());
+        match output.output() {
+            Ok(output) => {
+                if !output.status.success() {
+                    return Err(format!("Failed to run container: {:?}", String::from_utf8(output.stderr).unwrap()));
+                }
+            }
+            Err(e) => {
+                return Err(e.kind().to_string());
+            }
         }
 
         self.expose_service_ports();
