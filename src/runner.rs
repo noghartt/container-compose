@@ -8,8 +8,8 @@ pub fn run_services(path: Option<String>) {
         let container_name = service.name.clone().unwrap_or(name.clone());
         let service_container = ServiceContainer::new(container_name, service);
         match service_container.run() {
-          Ok(_) => println!("{}", name),
-          Err(e) => println!("Error while running {}: {:?}", name, e),
+            Ok(_) => println!("{}", name),
+            Err(e) => println!("Error while running {}: {:?}", name, e),
         };
     }
 }
@@ -126,7 +126,10 @@ impl ServiceContainer {
         match output.output() {
             Ok(output) => {
                 if !output.status.success() {
-                    return Err(format!("Failed to run container: {:?}", String::from_utf8(output.stderr).unwrap()));
+                    return Err(format!(
+                        "Failed to run container: {:?}",
+                        String::from_utf8(output.stderr).unwrap()
+                    ));
                 }
             }
             Err(e) => {
