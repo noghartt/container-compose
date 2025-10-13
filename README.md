@@ -1,3 +1,8 @@
+> [!NOTE]
+> 
+> ⚠️ container-compose is being put in archive-mode due to me not having time to maintain this project.
+> If you want to use a maintained tool, I recommend: [container-compose](https://github.com/mcrich23/container-compose).
+
 # container-compose
 
 A CLI to let you use the Apple [container](https://github.com/apple/container) like a `docker-compose`
